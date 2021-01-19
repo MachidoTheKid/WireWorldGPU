@@ -1,0 +1,66 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWStructuredBuffer<int> _Result;
+RWStructuredBuffer<int> _Input;
+
+#define S_EMPTY 0;
+#define S_WIRE 1;
+#define S_HEAD 2;
+#define S_TAIL 3;
+
+//Rules
+/*
+1) Empty Cells Stay Empty
+2)Electron Heads always become Electron Tails
+3)Electron Tail Becomes Copper
+4)Copper stays copper unless it has 2 or more neighbours that are Electron Heads. It becomes an Electron Head in that case.
+*/
+
+//Cell Coord To Index Value
+uint cctoi(float2 coord){
+    if((coord.x * 7 + coord.y)<0 || (coord.x * 7 + coord.y)>48)
+        return 0;
+    else
+        return _Input[uint (coord.x * 7 + coord.y)];             
+}
+
+[numthreads(7,7,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    //Directional Vector
+    float3 dvec = float3(1,0,-1);
+    //Current Coordinate
+    float2 cc = id.xy;
+    // current state
+    int currentstate = cctoi(cc);
+    int neighbors[8];
+    int nextstate = 0;
+    // moor neighbourhood
+    neighbors[0] = cctoi(cc+dvec.zz); neighbors[1] = cctoi(cc+dvec.yz); neighbors[2] = cctoi(cc+dvec.xz);
+    neighbors[3] = cctoi(cc+dvec.zy);                                   neighbors[4] = cctoi(cc+dvec.xy);
+    neighbors[5] = cctoi(cc+dvec.zx); neighbors[6] = cctoi(cc+dvec.yx); neighbors[7] = cctoi(cc+dvec.xx);
+
+    if (currentstate == 0)
+    {
+    }
+    else if (currentstate == 2)
+    {
+        nextstate = 3;
+    }
+    else if (currentstate == 3)
+    {
+        nextstate = 1;
+    }
+    else if (currentstate == 1)
+    {
+        int num = 0;
+        for (int i=0; i<8; ++i) { if (neighbors[i] == 2) { ++num; if (num > 2) break; } }
+        if (num == 1 || num == 2)
+            nextstate = 2;
+    }
+
+    _Result[id.x*7+id.y] = nextstate;
+}
