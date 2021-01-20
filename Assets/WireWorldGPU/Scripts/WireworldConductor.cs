@@ -14,10 +14,15 @@ public class WireworldConductor : MonoBehaviour
 
     public ComputeShader WireWorldRules;
 
+    public List<ComputeBuffer> Buffers = new List<ComputeBuffer>();
+    int curstate = 0;
+
     void Start()
     {
         WireWorldStatePrevious = new ComputeBuffer(N * N, sizeof(int));
+        Buffers.Add(WireWorldStatePrevious);
         WireWorldStateNext = new ComputeBuffer(N * N, sizeof(int));
+        Buffers.Add(WireWorldStateNext);              
 
         //Preload the Start State with some Data
         WireWorldStatePrevious.SetData(CreateClock8x8WithClock());
@@ -29,23 +34,27 @@ public class WireworldConductor : MonoBehaviour
     void AutomataStep()
     {
         //Previous state = Next State
-        WireWorldStateNext.GetData(TempBuffer);
-        WireWorldStatePrevious.SetData(TempBuffer);
+        //WireWorldStateNext.GetData(TempBuffer);
+        //WireWorldStatePrevious.SetData(TempBuffer);
+        int Next = curstate;
+        curstate = Mathf.Abs(Next - 1);
 
         //Load & Trigger the Compute shader
-        WireWorldRules.SetBuffer(0, "_Input", WireWorldStatePrevious);
-        WireWorldRules.SetBuffer(0, "_Result", WireWorldStateNext);
-        WireWorldRules.Dispatch(0, N/8, N/8, 1);
+        //WireWorldRules.SetBuffer(0, "_Input", WireWorldStatePrevious);
+        //WireWorldRules.SetBuffer(0, "_Result", WireWorldStateNext);
+        WireWorldRules.SetBuffer(0, "_Input", Buffers[curstate]); //Now look the theory is now we are no longer pulling stuff from the GPU every step
+        WireWorldRules.SetBuffer(0, "_Result", Buffers[Next]);    //But instead flipflopping the two buffers, so we skip the write and read from buffer thing
+        WireWorldRules.Dispatch(0, N/8, N/8, 1);                  //Someone do a profiler check and confirm this bussiness.
 
         //Set the Render shader's Content to the Next State
-        Shader.SetGlobalBuffer("_Cells", WireWorldStateNext);
+        Shader.SetGlobalBuffer("_Cells", Buffers[Next]);
     }
 
     int AutomataStepDelay = 0;
     void Update()
     {
         //if (Input.GetMouseButtonDown(0)){
-        //    runAutomata();
+        //    AutomataStep();
         //}
 
         //if (Input.GetMouseButton(0))
