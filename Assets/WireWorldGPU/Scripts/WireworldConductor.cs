@@ -93,12 +93,12 @@ public class WireworldConductor : MonoBehaviour
 
     private static int[] MapUniform2DArrayTo1DArray(int[,] array2D)
     {
-        int[] array1d = new int[array2D.Rank * array2D.GetLength(0)];
-        for (int x = 0; x < array2D.Rank; x++)
+        int[] array1d = new int[array2D.GetLength(0) * array2D.GetLength(1)];
+        for (int x = 0; x < array2D.GetLength(0); x++)
         {
-            for (int y = 0; y < array2D.GetLength(0); y++)
+            for (int y = 0; y < array2D.GetLength(1); y++)
             {
-                array1d[x * array2D.Rank + y] = array2D[x, y];
+                array1d[x * array2D.GetLength(0) + y] = array2D[x, y];
             }
         }
         return array1d;
