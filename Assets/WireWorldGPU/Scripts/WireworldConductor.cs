@@ -10,12 +10,14 @@ public class WireworldConductor : MonoBehaviour
     const int N = 8;
 
     public ComputeBuffer WireWorldStatePrevious, WireWorldStateNext;
-    int[] TempBuffer = new int[N * N];
+    //int[] TempBuffer = new int[N * N];
 
     public ComputeShader WireWorldRules;
 
     public List<ComputeBuffer> Buffers = new List<ComputeBuffer>();
-    int curstate = 0;
+    int curstate = 1;
+
+    public bool update;
 
     void Start()
     {
@@ -25,10 +27,13 @@ public class WireworldConductor : MonoBehaviour
         Buffers.Add(WireWorldStateNext);              
 
         //Preload the Start State with some Data
-        WireWorldStatePrevious.SetData(CreateClock8x8WithClock());
+        Buffers[0].SetData(CreateClock8x8WithClock());
 
         Shader.SetGlobalInt("_Size", N);
         WireWorldRules.SetInt("_Size", N);
+
+        //Display preloaded Data
+        Shader.SetGlobalBuffer("_Cells", Buffers[0]);
     }
 
     void AutomataStep()
@@ -53,11 +58,14 @@ public class WireworldConductor : MonoBehaviour
     int AutomataStepDelay = 0;
     void Update()
     {
-        //if (Input.GetMouseButtonDown(0)){
-        //    AutomataStep();
-        //}
-
-        //if (Input.GetMouseButton(0))
+        if (!update)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                AutomataStep();
+            }
+        }
+        else
         {
             if (AutomataStepDelay >60)
             {
@@ -83,6 +91,19 @@ public class WireworldConductor : MonoBehaviour
                 outf.WriteLine(Debugbuffer[i]);
     }
 
+    private static int[] MapUniform2DArrayTo1DArray(int[,] array2D)
+    {
+        int[] array1d = new int[array2D.Rank * array2D.GetLength(0)];
+        for (int x = 0; x < array2D.Rank; x++)
+        {
+            for (int y = 0; y < array2D.GetLength(0); y++)
+            {
+                array1d[x * array2D.Rank + y] = array2D[x, y];
+            }
+        }
+        return array1d;
+    }
+
     int[] CreateClock7x7WithClock()
     {
         int[,] array2D = new int[7, 7] {{ 0, 0, 0, 0, 0, 0, 0 },
@@ -92,16 +113,7 @@ public class WireworldConductor : MonoBehaviour
                                         { 0, 0, 3, 2, 1, 0, 0 },
                                         { 0, 0, 0, 0, 0, 0, 0 },
                                         { 0, 0, 0, 0, 0, 0, 0 }};
-
-        int[] array1d = new int[7 * 7];
-        for (int x = 0; x < 7; x++)
-        {
-            for (int y = 0; y < 7; y++)
-            {
-                array1d[x * 7 + y] = array2D[x, y];
-            }
-        }
-        return array1d;
+        return MapUniform2DArrayTo1DArray(array2D);
     }
     int[] CreateClock8x8WithClock()
     {
@@ -113,15 +125,6 @@ public class WireworldConductor : MonoBehaviour
                                         { 0, 0, 3, 2, 1, 1, 0, 0 },
                                         { 0, 0, 0, 0, 0, 0, 0, 0 },
                                         { 0, 0, 0, 0, 0, 0, 0, 0 }};
-
-        int[] array1d = new int[8 * 8];
-        for (int x = 0; x < 8; x++)
-        {
-            for (int y = 0; y < 8; y++)
-            {
-                array1d[x * 8 + y] = array2D[x, y];
-            }
-        }
-        return array1d;
+        return MapUniform2DArrayTo1DArray(array2D);
     }
 }

@@ -13,7 +13,7 @@ static const int S_TAIL = 3;
 //Cell Coord To Index Value
 uint cctoi(float2 coord){
 	//Check if coordinate is valid
-    if((coord.x * _Size + coord.y)<0 || (coord.x * _Size + coord.y)>48)
+    if((coord.x * _Size + coord.y)<0 || (coord.x * _Size + coord.y)>_Size*_Size)
         return 0;
     else
         return _Input[uint (coord.x * _Size + coord.y)];

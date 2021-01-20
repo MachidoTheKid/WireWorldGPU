@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Unlit_BufferRender
   m_Shader: {fileID: 4800000, guid: 09a1ba8797c745a4c83bbc6d8abf135e, type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: _LINESIZE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -24,8 +24,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _GridSize: 8
-    - _LineSize: 0.08
+    - _GridSize: 1
+    - _LineSize: 1
     - _SelectCell: 0
     - _SelectedCellX: 4
     - _SelectedCellY: 3

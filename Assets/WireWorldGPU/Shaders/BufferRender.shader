@@ -3,26 +3,28 @@
     Properties
     {
 		[HideInInspector]_MainTex("Texture", 2D) = "white" {}
-        _LineColor ("Line Color", Color) = (1,1,1,1)
-        _LineSize("Line Size", Range(0,1)) = 0.15
-        [IntRange] _GridSize("Grid Size", Range(1,100)) = 10
-    }
-    SubShader
-    {
-        Tags { "RenderType"="Opaque" }
-        LOD 100
+		_LineColor("Line Color", Color) = (1,1,1,1)
+		_LineSize("Line Size", Range(0,1)) = 1
+		[IntRange] _GridSize("Grid Size", Range(1,100)) = 10
+	}
+		SubShader
+		{
+			Tags { "RenderType" = "Opaque" }
+			LOD 100
+			CULL off
 
-        Pass
-        {
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
+			Pass
+			{
+				CGPROGRAM
+				#pragma vertex vert
+				#pragma fragment frag
 
-            #include "UnityCG.cginc"
-            #define S_empty float3(0,0,0)
-            #define S_wire float3(1.0, 0.6,0.2)
-            #define S_head float3(.3,.5,.1)
-            #define S_tail float3(1.,.2,.1)
+				#include "UnityCG.cginc"
+				#define S_empty float3(0,0,0)
+				#define S_wire float3(1.0, 0.6,0.2)
+				#define S_head float3(.3,.5,.1)
+				#define S_tail float3(1.,.2,.1)
+				static const float3 S_Colours[4] = {S_empty,S_wire,S_head,S_tail};
 
             sampler2D _MainTex;
 
@@ -61,31 +63,15 @@
             }
 
             float4 StateToColour(int state){
-
-                float4 color;
-                if (round(state) == 0)
-			    {
-				    color = float4(S_empty, 1.0);
-			    }
-                if (round(state) == 1)
-			    {
-				    color = float4(S_wire, 1.0);
-			    }
-                if (round(state) == 2)
-			    {
-				    color = float4(S_head, 1.0);
-			    }
-                if (round(state) == 3)
-			    {
-				    color = float4(S_tail, 1.0);
-			    }
-                return color;
+                return float4(S_Colours[round(state)],1);
             }
 
             float3 grid(float2 uv){
+				_LineSize /= _Size;
 
 			    float gsize = floor(_GridSize);
-			    gsize += _LineSize;
+				gsize *= _Size;
+				gsize += _LineSize;
 
 				// UV to Coordinate
 			    float2 id;
