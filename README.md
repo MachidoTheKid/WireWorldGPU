@@ -5,3 +5,5 @@ This project is an implementation of the WireWorld Cellular Automata. For more i
 
 ## Project Motivation:
 This exists as an example of how to run a Cellular Automata simulation on a grid, in Unity, using the GPU. Specifically, setting up with the use of a fragment shader and compute shader. The rules can be adjusted to match other types of existing Cellular Automata rules that currently exist.
+
+## Files:
