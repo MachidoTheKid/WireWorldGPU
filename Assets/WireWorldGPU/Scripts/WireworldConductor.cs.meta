@@ -3,7 +3,9 @@ guid: 3afd3d287a61dd649aff55fa33a77a16
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - renderbuffer: {fileID: 2100000, guid: e75a7d730c7cc1049a9e8ad75db353da, type: 2}
+  - WireWorldRules: {fileID: 7200000, guid: 8bfa700ed96b1154584dbb3a52cafae2, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

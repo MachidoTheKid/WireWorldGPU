@@ -9,6 +9,8 @@ public class WireworldConductor : MonoBehaviour
 {
     const int N = 8;
 
+    public Material renderbuffer;
+
     public ComputeBuffer WireWorldStatePrevious, WireWorldStateNext;
     //int[] TempBuffer = new int[N * N];
 
@@ -19,8 +21,11 @@ public class WireworldConductor : MonoBehaviour
 
     public bool update;
 
+
     void Start()
     {
+
+   
         WireWorldStatePrevious = new ComputeBuffer(N * N, sizeof(int));
         Buffers.Add(WireWorldStatePrevious);
         WireWorldStateNext = new ComputeBuffer(N * N, sizeof(int));
@@ -28,12 +33,13 @@ public class WireworldConductor : MonoBehaviour
 
         //Preload the Start State with some Data
         Buffers[0].SetData(CreateClock8x8WithClock());
-
-        Shader.SetGlobalInt("_Size", N);
+        DebugBufferWrite(Buffers[0], @"C:\Users\Nathan Duker\Documents\Debug.txt");
+        renderbuffer.SetInt("_Size", N);
         WireWorldRules.SetInt("_Size", N);
 
         //Display preloaded Data
-        Shader.SetGlobalBuffer("_Cells", Buffers[0]);
+        renderbuffer.SetBuffer("_Cells", Buffers[0]);
+
     }
 
     void AutomataStep()
@@ -60,7 +66,7 @@ public class WireworldConductor : MonoBehaviour
     {
         if (!update)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(2))
             {
                 AutomataStep();
             }
@@ -74,6 +80,9 @@ public class WireworldConductor : MonoBehaviour
             }
             AutomataStepDelay++;
         }
+        
+
+
     }
 
     void OnDestroy()
@@ -104,6 +113,20 @@ public class WireworldConductor : MonoBehaviour
         return array1d;
     }
 
+    private int CalculateIndex(int x, int y)
+    {
+
+        return x* N + y;      
+
+    }
+
+    public void setcelltovalue(float x, float y, int value)
+    {
+        int[] TempBuffer = new int[N * N];
+        Buffers[Mathf.Abs(curstate - 1)].GetData(TempBuffer);
+        TempBuffer[CalculateIndex(Mathf.FloorToInt(x*(N)), Mathf.FloorToInt(y*(N)))] = value;
+        Buffers[Mathf.Abs(curstate - 1)].SetData(TempBuffer);
+    }
     int[] CreateClock7x7WithClock()
     {
         int[,] array2D = new int[7, 7] {{ 0, 0, 0, 0, 0, 0, 0 },
