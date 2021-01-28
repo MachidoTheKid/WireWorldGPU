@@ -8,8 +8,14 @@ This exists as an example of how to run a Cellular Automata simulation on a grid
 
 ## Core Files:
 Wireworldrules.compute: This compute shader file contains all the logic that establishes the rules for WireWorld to run on the grid. 
+
+
 WireworldConductor:
+
+
 WireworldInteraction:
+
+
 BufferRender.shader: shader file that generates a grid on which the WireWorld Cellular Automata will run from. 
 
 ## The Rules
