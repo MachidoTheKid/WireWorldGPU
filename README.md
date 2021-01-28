@@ -12,7 +12,7 @@ WireworldConductor:
 WireworldInteraction:
 BufferRender.shader: shader file that generates a grid on which the WireWorld Cellular Automata will run from. 
 
-##The Rules
+## The Rules
 1) Empty Cells Stay Empty.
 2) Electron Heads always become Electron Tails.
 3) Electron Tail Becomes Wire.
