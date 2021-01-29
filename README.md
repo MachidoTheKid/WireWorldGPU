@@ -27,3 +27,7 @@ BufferRender.shader: Shader file that generates a grid on which the WireWorld Ce
 2) Electron Heads always become Electron Tails.
 3) Electron Tail Becomes Wire.
 4) Wire stays Wire unless it has 2 or more neighbours that are Electron Heads. It becomes an Electron Head in that case.
+
+## Running The Project
+Download the project and open it up in Unity Version 2020.1.17f1. In the Scenes folder, locate and open the "Demo" scene. Hit the Play button. Select the Plane in the object hierarchy and ensure that update is toggled. The WireWorld Cellular Automata should start running. Left click with the mouse to turn any cell into a wire(orange). Right click a cell to set it to empty(black).
+
